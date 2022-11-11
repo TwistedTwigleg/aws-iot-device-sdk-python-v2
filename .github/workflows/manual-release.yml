@@ -34,3 +34,5 @@ jobs:
         echo "Release type setting ${{ github.event.inputs.release_type }}"
         echo "Release title ${{ github.event.inputs.release_title }}"
         echo "Release description ${{ github.event.inputs.release_description }}"
+
+        sh ./update-version.sh ${{ github.event.inputs.release_type }} ${{ github.event.inputs.release_title }} ${{ github.event.inputs.release_description }} PLACEHOLDER
