@@ -12,7 +12,7 @@ on:
           - MINOR
       release_title:
         description: "The title of the release"
-        require: true
+        required: true
       release_description:
         description: "The description to add to the release (not including auto-generated description)"
         required: false
@@ -35,4 +35,4 @@ jobs:
         echo "Release title ${{ github.event.inputs.release_title }}"
         echo "Release description ${{ github.event.inputs.release_description }}"
 
-        sh ./update-version.sh ${{ github.event.inputs.release_type }} ${{ github.event.inputs.release_title }} ${{ github.event.inputs.release_description }} PLACEHOLDER
+        ./update-version.sh ${{ github.event.inputs.release_type }} ${{ github.event.inputs.release_title }} ${{ github.event.inputs.release_description }} PLACEHOLDER
