@@ -1,0 +1,36 @@
+name: Manual-Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_type:
+        type: choice
+        description: "The type of release to make (Minor, Patch, etc)"
+        required: true
+        options:
+          - PATCH
+          - MINOR
+      release_title:
+        description: "The title of the release"
+        require: true
+      release_description:
+        description: "The description to add to the release (not including auto-generated description)"
+        required: false
+
+jobs:
+  update-version:
+    runs-on: ubuntu-20.04 # latest
+    permissions:
+      contents: write # allow push
+
+    steps:
+    - name: Checkout Sources
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Test Output
+      run: |
+        echo "Release type setting ${{ github.event.inputs.release_type }}"
+        echo "Release title ${{ github.event.inputs.release_title }}"
+        echo "Release description ${{ github.event.inputs.release_description }}"
