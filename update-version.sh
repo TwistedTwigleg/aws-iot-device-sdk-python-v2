@@ -28,11 +28,11 @@ increment_version() {
 echo "Current release version is ${version_without_v}"
 
 new_version=${version_without_v}
-if $RELEASE_TYPE == "PATCH"
+if [ $RELEASE_TYPE == "PATCH" ]; then
     new_version=$(increment_version ${version_without_v} 2 )
-elif $RELEASE_TYPE == "MINOR"
+elif [ $RELEASE_TYPE == "MINOR" ]; then
     new_version=$(increment_version ${version_without_v} 1 )
-elif $RELEASE_TYPE == "MAJOR"
+elif [ $RELEASE_TYPE == "MAJOR" ]; then
     new_version=$(increment_version ${version_without_v} 0 )
 else
     echo "ERROR! Unknown release type! Exitting..."
