@@ -86,7 +86,8 @@ else
 fi
 
 # Change the title to the title we put
-gh release edit v${new_version} --title "${RELEASE_TITLE}"
+tmp=$(echo $RELEASE_TITLE)
+gh release edit v${new_version} --title "$tmp"
 
 # ===========================================
 
