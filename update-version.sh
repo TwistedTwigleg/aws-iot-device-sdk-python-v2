@@ -6,7 +6,6 @@ exec 1>&2
 RELEASE_TYPE=$1
 RELEASE_TITLE=$2
 IS_PRE_RELEASE=$3
-TAG_PR_TOKEN=$4
 
 pushd $(dirname $0) > /dev/null
 
@@ -47,7 +46,6 @@ echo "New version is ${new_version}"
 echo "!!! ABOUT TO MAKE NEW VERSION !!!"
 git config --local user.email "ncbeard@amazon.com"
 git config --local user.name "TwistedTwigleg"
-# echo $TAG_PR_TOKEN | gh auth login --with-token
 
 # --==--
 # NOTE - if you need to make changes BEFORE making a release, do it here and commit the file!
@@ -82,10 +80,13 @@ git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-
 # now recreate the release on the updated tag
 # (If a pre-release, then -p needs to be added)
 if [ $IS_PRE_RELEASE == "true" ]; then
-    gh release create v${new_version} --title "${RELEASE_TITLE}" -p --generate-notes
+    gh release create v${new_version} -p --generate-notes
 else
-    gh release create v${new_version} --title "${RELEASE_TITLE}" --generate-notes
+    gh release create v${new_version} --generate-notes
 fi
+
+# Change the title to the title we put
+gh release edit v${new_version} --title "${RELEASE_TITLE}"
 
 # ===========================================
 
