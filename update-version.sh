@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-# Redirect output to stderr.
-exec 1>&2
-
 RELEASE_TYPE=$1
-RELEASE_TITLE=${2}
+RELEASE_TITLE=$2
 IS_PRE_RELEASE=$3
 
 pushd $(dirname $0) > /dev/null
+
+echo "Release type setting ${ RELEASE_TYPE}"
+echo "Release title ${RELEASE_TITLE}"
+echo "Is pre-release ${IS_PRE_RELEASE}"
 
 # TODO - add validation of inputs
 
@@ -86,7 +87,7 @@ else
 fi
 
 # Change the title to the title we put
-gh release edit v${new_version} --title ${RELEASE_TITLE}
+gh release edit v${new_version} --title $2
 
 # ===========================================
 
