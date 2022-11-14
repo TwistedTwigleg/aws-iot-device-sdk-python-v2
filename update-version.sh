@@ -49,8 +49,8 @@ git config --local user.name "TwistedTwigleg"
 
 # --==--
 # NOTE - if you need to make changes BEFORE making a release, do it here and commit the file!
-new_version_branch=AutoTag-v${new_version}
-git checkout -b ${new_version_branch}
+#new_version_branch=AutoTag-v${new_version}
+#git checkout -b ${new_version_branch}
 
 # TODO: make changes to files HERE if needed!
 # NOTE: Do NOT include VERSION file in the commit.
