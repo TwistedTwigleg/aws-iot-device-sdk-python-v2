@@ -41,7 +41,7 @@ jobs:
         echo "Release title ${{ github.event.inputs.release_title }}"
         echo "Is pre-release ${{ github.event.inputs.pre_release }}"
 
-        ./update-version.sh ${{ github.event.inputs.release_type }} ${{ github.event.inputs.release_title }} ${{ github.event.inputs.pre_release }}
+        ./update-version.sh "${{ github.event.inputs.release_type }}" "${{ github.event.inputs.release_title }}" "${{ github.event.inputs.pre_release }}"
 
         echo "Testing that VERSION file exists..."
         echo $(cat VERSION)
