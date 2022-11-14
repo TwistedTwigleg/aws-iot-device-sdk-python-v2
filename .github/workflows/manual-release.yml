@@ -45,5 +45,5 @@ jobs:
         version_without_v=$(echo ${version} | cut -f2 -dv)
         echo "${version_without_v}" > VERSION
 
-        echo "Testing that VERSION file exists..."
+        echo "Testing that VERSION file exists by printing it:"
         echo $(cat VERSION)

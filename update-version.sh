@@ -4,19 +4,7 @@ RELEASE_TYPE=$1
 RELEASE_TITLE=$2
 IS_PRE_RELEASE=$3
 
-pushd $(dirname $0) > /dev/null
-
-echo "Release type setting ${RELEASE_TYPE}"
-echo "Release title ${RELEASE_TITLE}"
-echo "Is pre-release ${IS_PRE_RELEASE}"
-
-# TODO - add validation of inputs
-
-git checkout main
-
-version=$(git describe --tags --abbrev=0)
-version_without_v=$(echo ${version} | cut -f2 -dv)
-
+# Increments the version up by one
 # Credit: https://stackoverflow.com/a/64390598
 increment_version() {
   local delimiter=.
@@ -27,24 +15,37 @@ increment_version() {
   echo $(local IFS=$delimiter ; echo "${array[*]}")
 }
 
-echo "Current release version is ${version_without_v}"
+pushd $(dirname $0) > /dev/null
 
-new_version=${version_without_v}
+# Get the current version
+git checkout main
+current_version=$(git describe --tags --abbrev=0)
+current_version_without_v=$(echo ${current_version} | cut -f2 -dv)
+
+echo "Current release version is ${current_version_without_v}"
+
+# Validate that RELEASE_TYPE is what we expect and bump the version:
+new_version=${current_version_without_v}
 if [ $RELEASE_TYPE == "PATCH" ]; then
-    new_version=$(increment_version ${version_without_v} 2 )
+    new_version=$(increment_version ${current_version_without_v} 2 )
 elif [ $RELEASE_TYPE == "MINOR" ]; then
-    new_version=$(increment_version ${version_without_v} 1 )
+    new_version=$(increment_version ${current_version_without_v} 1 )
 elif [ $RELEASE_TYPE == "MAJOR" ]; then
-    new_version=$(increment_version ${version_without_v} 0 )
+    new_version=$(increment_version ${current_version_without_v} 0 )
 else
-    echo "ERROR! Unknown release type! Exitting..."
+    echo "ERROR: Unknown release type! Exitting..."
     exit -1
 fi
-
 echo "New version is ${new_version}"
 
-# ===========================================
-echo "!!! ABOUT TO MAKE NEW VERSION !!!"
+# Validate that the title is set
+if [ $RELEASE_TITLE == "" ]; then
+    echo "ERROR: No title set! Cannot make release. Exitting..."
+    exit -1
+fi
+# (We do not need to validate the pre-release input, it either will be 'true' or not)
+
+# Setup Github credentials
 git config --local user.email "ncbeard@amazon.com"
 git config --local user.name "TwistedTwigleg"
 
@@ -67,27 +68,26 @@ git config --local user.name "TwistedTwigleg"
 # gh pr merge --admin --squash
 # --==--
 
-# update local state with the merged pr
+# Update local state with the merged pr (if one was made) and just generally make sure we're up to date
 git fetch
 git checkout main
 git pull "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" main
 
-# create new tag on latest commit with old message
+# Create new tag on latest commit with the release title
 git tag -f v${new_version} -m "${RELEASE_TITLE}"
-
-# push new tag to github
+# Push new tag to github
 git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" --tags
 
 # now recreate the release on the updated tag
 # (If a pre-release, then -p needs to be added)
-if [ $IS_PRE_RELEASE == "true" ]; then
-    gh release create "v${new_version}" -p --generate-notes --notes-start-tag "$version" --target main
-else
-    gh release create "v${new_version}" --generate-notes --notes-start-tag "$version" --target main
-fi
 
-# Change the title to the title we put
-gh release edit "v${new_version}" -t "${RELEASE_TITLE}"
+# Create the release with auto-generated notes as the description
+# (NOTE: This will only add stuff if there is at least one PR. If there is no PRs, then this will be blank and need manual input/changing afterwards)
+if [ $IS_PRE_RELEASE == "true" ]; then
+    gh release create "v${new_version}" -p --generate-notes --notes-start-tag "$current_version" --target main -t "${RELEASE_TITLE}"
+else
+    gh release create "v${new_version}" --generate-notes --notes-start-tag "$current_version" --target main -t "${RELEASE_TITLE}"
+fi
 
 # ===========================================
 
