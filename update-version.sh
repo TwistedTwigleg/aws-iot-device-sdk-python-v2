@@ -6,7 +6,7 @@ IS_PRE_RELEASE=$3
 
 pushd $(dirname $0) > /dev/null
 
-echo "Release type setting ${ RELEASE_TYPE}"
+echo "Release type setting ${RELEASE_TYPE}"
 echo "Release title ${RELEASE_TITLE}"
 echo "Is pre-release ${IS_PRE_RELEASE}"
 
@@ -73,7 +73,7 @@ git checkout main
 git pull "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" main
 
 # create new tag on latest commit with old message
-git tag -f v${new_version} -m "Version v${new_version} tag"
+git tag -f v${new_version} -m "${RELEASE_TITLE}"
 
 # push new tag to github
 git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" --tags
@@ -81,13 +81,13 @@ git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-
 # now recreate the release on the updated tag
 # (If a pre-release, then -p needs to be added)
 if [ $IS_PRE_RELEASE == "true" ]; then
-    gh release create v${new_version} -p --generate-notes --notes-start-tag "$version" --target main
+    gh release create "v${new_version}" -p --generate-notes --notes-start-tag "$version" --target main
 else
-    gh release create v${new_version} --generate-notes --notes-start-tag "$version" --target main
+    gh release create "v${new_version}" --generate-notes --notes-start-tag "$version" --target main
 fi
 
 # Change the title to the title we put
-gh release edit v${new_version} --title $2
+gh release edit "v${new_version}" -t "${RELEASE_TITLE}"
 
 # ===========================================
 
