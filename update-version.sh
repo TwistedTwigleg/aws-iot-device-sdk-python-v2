@@ -80,9 +80,9 @@ git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-
 # now recreate the release on the updated tag
 # (If a pre-release, then -p needs to be added)
 if [ $IS_PRE_RELEASE == "true" ]; then
-    gh release create v${new_version} -p --generate-notes --notes-start-tag "$version"
+    gh release create v${new_version} -p --generate-notes --notes-start-tag "$version" --target main
 else
-    gh release create v${new_version} --generate-notes --notes-start-tag "$version"
+    gh release create v${new_version} --generate-notes --notes-start-tag "$version" --target main
 fi
 
 # Change the title to the title we put
