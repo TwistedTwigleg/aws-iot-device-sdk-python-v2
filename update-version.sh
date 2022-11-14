@@ -50,21 +50,21 @@ git config --local user.email "ncbeard@amazon.com"
 git config --local user.name "TwistedTwigleg"
 
 # --==--
-# NOTE - if you need to make changes BEFORE making a release, do it here and commit the file!
-new_version_branch=AutoTag-v${new_version}
-git checkout -b ${new_version_branch}
+# # NOTE - if you need to make changes BEFORE making a release, do it here and commit the file!
+# new_version_branch=AutoTag-v${new_version}
+# git checkout -b ${new_version_branch}
 
-# NOTE: Make changes to files HERE if needed!
-echo "Wow, a test!" > TEST_OUTPUT
-git add TEST_OUTPUT
-git commit -m "[$new_version] $RELEASE_TITLE"
+# # NOTE: Make changes to files HERE if needed!
+# echo "Wow, a test!" > TEST_OUTPUT
+# git add TEST_OUTPUT
+# git commit -m "[v$new_version] $RELEASE_TITLE"
 
-# push the commit and create a PR
-git push -u "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" ${new_version_branch}
-gh pr create --title "AutoTag PR for v${new_version}" --body "AutoTag PR for v${new_version}" --head ${new_version_branch}
+# # push the commit and create a PR
+# git push -u "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" ${new_version_branch}
+# gh pr create --title "AutoTag PR for v${new_version}" --body "AutoTag PR for v${new_version}" --head ${new_version_branch}
 
-# Merge the PR
-gh pr merge --admin --squash
+# # Merge the PR
+# gh pr merge --admin --squash
 # --==--
 
 # Update local state with the merged pr (if one was made) and just generally make sure we're up to date
