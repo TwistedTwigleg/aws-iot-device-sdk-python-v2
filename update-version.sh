@@ -91,7 +91,4 @@ gh release edit "v${new_version}" -t "${RELEASE_TITLE}"
 
 # ===========================================
 
-# Make the version file so we can upload it in the next step in manual-release.yml
-echo "${new_version}" > VERSION
-
 popd > /dev/null
