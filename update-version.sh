@@ -5,7 +5,7 @@ exec 1>&2
 
 RELEASE_TYPE=$1
 RELEASE_TITLE=$2
-IS_PRE_RELEASE$3
+IS_PRE_RELEASE=$3
 TAG_PR_TOKEN=$4
 
 pushd $(dirname $0) > /dev/null
@@ -84,7 +84,7 @@ git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-
 if [ $IS_PRE_RELEASE == "true" ]; then
     gh release create v${new_version} --title "${RELEASE_TITLE}" -p --generate-notes
 else
-    gh release create v${new_version} --title "${RELEASE_TITLE}" -p --generate-notes
+    gh release create v${new_version} --title "${RELEASE_TITLE}" --generate-notes
 fi
 
 # ===========================================
