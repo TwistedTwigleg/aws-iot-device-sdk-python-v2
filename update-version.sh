@@ -47,7 +47,7 @@ echo "New version is ${new_version}"
 echo "!!! ABOUT TO MAKE NEW VERSION !!!"
 git config --local user.email "ncbeard@amazon.com"
 git config --local user.name "TwistedTwigleg"
-echo $TAG_PR_TOKEN | gh auth login --with-token
+# echo $TAG_PR_TOKEN | gh auth login --with-token
 
 # --==--
 # NOTE - if you need to make changes BEFORE making a release, do it here and commit the file!
