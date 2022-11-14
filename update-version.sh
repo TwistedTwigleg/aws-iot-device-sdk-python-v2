@@ -4,7 +4,7 @@
 exec 1>&2
 
 RELEASE_TYPE=$1
-RELEASE_TITLE=$2
+RELEASE_TITLE=${2}
 IS_PRE_RELEASE=$3
 
 pushd $(dirname $0) > /dev/null
@@ -86,7 +86,8 @@ else
 fi
 
 # Change the title to the title we put
-gh release edit v${new_version} --title "\"$RELEASE_TITLE\""
+gh release edit v${new_version} --title "${RELEASE_TITLE}"
+echo "Title is: ${RELEASE_TITLE}"
 
 # ===========================================
 
