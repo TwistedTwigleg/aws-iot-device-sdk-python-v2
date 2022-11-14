@@ -5,10 +5,12 @@ exec 1>&2
 
 RELEASE_TYPE=$1
 RELEASE_TITLE=$2
-RELEASE_DESCRIPTION=$3
+IS_PRE_RELEASE$3
 TAG_PR_TOKEN=$4
 
 pushd $(dirname $0) > /dev/null
+
+# TODO - add validation of inputs
 
 git checkout main
 
@@ -40,62 +42,54 @@ else
 fi
 
 echo "New version is ${new_version}"
-echo "${version_without_v}" > VERSION
 
-# if git diff --exit-code VERSION > /dev/null; then
-#     echo "No version change"
-# else
-#     version_branch=AutoTag-${version}
-#     git checkout -b ${version_branch}
+# ===========================================
+echo "!!! ABOUT TO MAKE NEW VERSION !!!"
+git config --local user.email "ncbeard@amazon.com"
+git config --local user.name "TwistedTwigleg"
+echo $TAG_PR_TOKEN | gh auth login --with-token
 
-#     git config --local user.email "aws-sdk-common-runtime@amazon.com"
-#     git config --local user.name "GitHub Actions"
-#     git add VERSION
-#     git commit -m "Updated version to ${version}"
+# --==--
+# NOTE - if you need to make changes BEFORE making a release, do it here and commit the file!
+new_version_branch=AutoTag-v${new_version}
+git checkout -b ${new_version_branch}
 
-#     echo $TAG_PR_TOKEN | gh auth login --with-token
+# TODO: make changes to files HERE if needed!
+# NOTE: Do NOT include VERSION file in the commit.
+# Example:
+# git add setup.py
+# git commit -m "Updated version to ${new_version}"
 
-#     # awkward - we need to snip the old release message and then force overwrite the tag with the new commit but
-#     # preserving the old message
-#     # the release message seems to be best retrievable by grabbing the last lines of the release view from the
-#     # github cli
-#     release_line_count=$(gh release view ${version} | wc -l)
-#     let release_message_lines=release_line_count-8
-#     tag_message=$(gh release view ${version} | tail -n ${release_message_lines})
-#     title_line=$(gh release view ${version} | head -n 1)
-#     title_value=$(echo $title_line | sed -n "s/title: \(.*\)/\1/p")
-#     echo "Old release title is: ${title_value}"
-#     echo "Old release message is: ${tag_message}"
+# push the commit and create a PR
+# git push -u "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" ${new_version_branch}
+# gh pr create --title "AutoTag PR for v${new_version}" --body "AutoTag PR for v${new_version}" --head ${new_version_branch}
 
-#     # push the commit
-#     git push -u "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/aws/aws-iot-device-sdk-python-v2.git" ${version_branch}
+# Merge the PR
+# gh pr merge --admin --squash
+# --==--
 
-#     gh pr create --title "AutoTag PR for ${version}" --body "AutoTag PR for ${version}" --head ${version_branch}
+# update local state with the merged pr
+git fetch
+git checkout main
+git pull "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" main
 
-#     # this requires more permissions than the bot token currently has
-#     # todo: can we update the bot token so that my pat isn't necessary?
-#     gh pr merge --admin --squash
+# create new tag on latest commit with old message
+git tag -f v${new_version} -m "Version v${new_version} tag"
 
-#     # update local state with the merged pr
-#     git fetch
-#     git checkout main
-#     git pull "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/aws/aws-iot-device-sdk-python-v2.git" main
+# push new tag to github
+git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" --tags
 
-#     # delete old release
-#     gh release delete -y ${version}
+# now recreate the release on the updated tag
+# (If a pre-release, then -p needs to be added)
+if [ $IS_PRE_RELEASE == "true" ]; then
+    gh release create v${new_version} --title "${RELEASE_TITLE}" -p --generate-notes
+else
+    gh release create v${new_version} --title "${RELEASE_TITLE}" -p --generate-notes
+fi
 
-#     # delete the old tag
-#     git tag -d ${version}
-#     git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/aws/aws-iot-device-sdk-python-v2.git" :refs/tags/${version}
+# ===========================================
 
-#     # create new tag on latest commit with old message
-#     git tag -f ${version} -m "${tag_message}"
-
-#     # push new tag to github
-#     git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/aws/aws-iot-device-sdk-python-v2.git" --tags
-
-#     # now recreate the release on the updated tag
-#     gh release create ${version} --title "${title_value}" -p -n "${tag_message}"
-# fi
+# Make the version file so we can upload it in the next step in manual-release.yml
+echo "${new_version}" > VERSION
 
 popd > /dev/null

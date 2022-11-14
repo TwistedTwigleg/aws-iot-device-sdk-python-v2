@@ -13,9 +13,10 @@ on:
       release_title:
         description: "The title of the release"
         required: true
-      release_description:
-        description: "The description to add to the release (not including auto-generated description)"
+      pre_release:
+        description: "Is this release a pre-release?"
         required: false
+        default: false
 
 jobs:
   update-version:
@@ -33,6 +34,9 @@ jobs:
       run: |
         echo "Release type setting ${{ github.event.inputs.release_type }}"
         echo "Release title ${{ github.event.inputs.release_title }}"
-        echo "Release description ${{ github.event.inputs.release_description }}"
+        echo "Is pre-release ${{ github.event.inputs.pre_release }}"
 
-        ./update-version.sh ${{ github.event.inputs.release_type }} ${{ github.event.inputs.release_title }} ${{ github.event.inputs.release_description }} PLACEHOLDER
+        ./update-version.sh ${{ github.event.inputs.release_type }} ${{ github.event.inputs.release_title }} ${{ github.event.inputs.pre_release }} ${{ secrets.TAG_PR_TOKEN }}
+
+        echo "Testing that VERSION file exists..."
+        echo $(cat VERSION)
