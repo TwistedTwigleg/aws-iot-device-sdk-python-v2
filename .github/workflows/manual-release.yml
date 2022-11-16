@@ -8,11 +8,11 @@ on:
     inputs:
       release_type:
         type: choice
-        description: "Release type:\n* PATCH = bug fixes\n* MINOR = new features"
+        description: "Release type:"
         required: true
         options:
-          - PATCH
-          - MINOR
+          - bug fix (PATCH)
+          - new feature (MINOR)
       release_title:
         description: "The title of the release"
         required: true
@@ -31,4 +31,7 @@ jobs:
 
     - name: Make new release
       run: |
-        ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ github.event.inputs.release_title }}"
+        release_title_sanitized=$(echo ${github.event.inputs.release_title//[\"]\\\"})
+        release_title_sanitized=$(echo ${release_title_sanitized//[\']\\\'})
+        release_title_sanitized=$(echo ${release_title_sanitized//[\$]/})
+        ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ release_title_sanitized }}"

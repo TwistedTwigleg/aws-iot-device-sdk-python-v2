@@ -36,11 +36,11 @@ echo "Current release version is ${current_version_without_v}"
 
 # Validate that RELEASE_TYPE is what we expect and bump the version:
 new_version=${current_version_without_v}
-if [ $RELEASE_TYPE == "PATCH" ]; then
+if [ $RELEASE_TYPE == "bug fix (PATCH)" ]; then
     new_version=$(increment_version ${current_version_without_v} 2 )
-elif [ $RELEASE_TYPE == "MINOR" ]; then
+elif [ $RELEASE_TYPE == "new feature (MINOR)" ]; then
     new_version=$(increment_version ${current_version_without_v} 1 )
-elif [ $RELEASE_TYPE == "MAJOR" ]; then
+elif [ $RELEASE_TYPE == "new version (MAJOR)" ]; then
     new_version=$(increment_version ${current_version_without_v} 0 )
 else
     echo "ERROR: Unknown release type! Exitting..."
