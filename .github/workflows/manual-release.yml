@@ -22,8 +22,6 @@ jobs:
     runs-on: ubuntu-20.04 # latest
     permissions:
       contents: write # allow push
-    env:
-      release_title_sanitized: ""
 
     steps:
     - name: Checkout Sources
@@ -33,7 +31,7 @@ jobs:
 
     - name: Make new release
       run: |
-        env.release_title_sanitized=$(echo "${github.event.inputs.release_title//[\"]\\\"}")
-        env.release_title_sanitized=$(echo "${env.release_title_sanitized//[\']\\\'}")
-        env.release_title_sanitized=$(echo "${env.release_title_sanitized//[\$]/}")
-        ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ env.release_title_sanitized }}"
+        github.event.inputs.release_title=$(echo ${github.event.inputs.release_title//[\"]\\\"})
+        github.event.inputs.release_title=$(echo ${github.event.inputs.release_title//[\']\\\'})
+        github.event.inputs.release_title=$(echo ${$github.event.inputs.release_title//[\$]/})
+        ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ github.event.inputs.release_title }}"
