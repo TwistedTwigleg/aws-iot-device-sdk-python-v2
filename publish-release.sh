@@ -14,8 +14,6 @@ if [ "$#" != "2" ]; then
     exit 1
 fi
 
-exit 0
-
 # Increments the version up by one
 # Credit: https://stackoverflow.com/a/64390598
 increment_version() {
