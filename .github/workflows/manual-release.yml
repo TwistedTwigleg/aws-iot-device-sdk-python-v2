@@ -33,6 +33,7 @@ jobs:
       env:
         TEST: ${{ github.event.inputs.release_title }}
       run: |
+        TEST=$(echo ${TEST//[\"]\\\"})
         # echo ${github.event.inputs.release_title//[\"]\\\"}
         # github.event.inputs.release_title=$(echo ${github.event.inputs.release_title//[\']\\\'})
         # github.event.inputs.release_title=$(echo ${$github.event.inputs.release_title//[\$]/})
