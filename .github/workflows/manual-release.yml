@@ -33,7 +33,7 @@ jobs:
 
     - name: Make new release
       run: |
-        env.release_title_sanitized=$(echo "${github.event.inputs.release_title//[\"]\\\"})
+        env.release_title_sanitized=$(echo "${github.event.inputs.release_title//[\"]\\\"}")
         env.release_title_sanitized=$(echo "${env.release_title_sanitized//[\']\\\'}")
         env.release_title_sanitized=$(echo "${env.release_title_sanitized//[\$]/}")
         ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ env.release_title_sanitized }}"
