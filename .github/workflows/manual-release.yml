@@ -1,5 +1,7 @@
 name: Manual-Release
 
+name: Release
+
 env:
   GH_TOKEN: ${{ github.token }}
 
@@ -8,7 +10,7 @@ on:
     inputs:
       release_type:
         type: choice
-        description: "The type of release to make (Minor, Patch, etc)"
+        description: "Release type: PATCH = bug fixes, MINOR = new features"
         required: true
         options:
           - PATCH
@@ -22,7 +24,6 @@ jobs:
     runs-on: ubuntu-20.04 # latest
     permissions:
       contents: write # allow push
-      pull-requests: write # allow making and merging PR
 
     steps:
     - name: Checkout Sources
@@ -30,15 +31,6 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Test Output
+    - name: Make new release
       run: |
-        ./update-version.sh "${{ github.event.inputs.release_type }}" "${{ github.event.inputs.release_title }}" "${{ github.event.inputs.pre_release }}"
-
-    - name: "Create and upload VERSION file"
-      run: |
-        version=$(git describe --tags --abbrev=0)
-        version_without_v=$(echo ${version} | cut -f2 -dv)
-        echo "${version_without_v}" > VERSION
-
-        echo "Testing that VERSION file exists by printing it:"
-        echo $(cat VERSION)
+        ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ github.event.inputs.release_title }}"

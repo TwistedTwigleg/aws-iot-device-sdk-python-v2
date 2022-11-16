@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
 
+set -euxo pipefail
+
+# Redirect output to stderr.
+exec 1>&2
+
 RELEASE_TYPE=$1
 RELEASE_TITLE=$2
-IS_PRE_RELEASE="false"
+
+# Make sure there are ONLY two arguments
+if [ "$#" != "2" ]; then
+    echo "ERROR: Arguments passed is NOT equal to two!"
+    exit 1
+fi
+
+exit 0
 
 # Increments the version up by one
 # Credit: https://stackoverflow.com/a/64390598
@@ -43,29 +55,12 @@ if [ $RELEASE_TITLE == "" ]; then
     echo "ERROR: No title set! Cannot make release. Exitting..."
     exit -1
 fi
-# (We do not need to validate the pre-release input, it either will be 'true' or not)
 
 # Setup Github credentials
-git config --local user.email "ncbeard@amazon.com"
-git config --local user.name "TwistedTwigleg"
+git config --local user.email "TwistedTwigleg"
+git config --local user.name "GitHub Actions"
 
-# --==--
-# # NOTE - if you need to make changes BEFORE making a release, do it here and commit the file!
-# new_version_branch=AutoTag-v${new_version}
-# git checkout -b ${new_version_branch}
-
-# # NOTE: Make changes to files HERE if needed!
-# echo "Wow, a test!" > TEST_OUTPUT
-# git add TEST_OUTPUT
-# git commit -m "[v$new_version] $RELEASE_TITLE"
-
-# # push the commit and create a PR
-# git push -u "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" ${new_version_branch}
-# gh pr create --title "AutoTag PR for v${new_version}" --body "AutoTag PR for v${new_version}" --head ${new_version_branch}
-
-# # Merge the PR
-# gh pr merge --admin --squash
-# --==--
+# NOTE - if you need to make changes BEFORE making a release, do it here. See Java V2 SDK for example.
 
 # Update local state with the merged pr (if one was made) and just generally make sure we're up to date
 git fetch
@@ -77,18 +72,23 @@ git tag -f v${new_version} -m "${RELEASE_TITLE}"
 # Push new tag to github
 git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" --tags
 
-# now recreate the release on the updated tag
-# (If a pre-release, then -p needs to be added)
+# Determine if this is a pre-release or not based on the major version
+IS_PRE_RELEASE="false"
+VERSION_STRING_DELIMITER=.
+VERSION_STRING_ARRAY=($(echo "$new_version" | tr $VERSION_STRING_DELIMITER '\n'))
+if [ ${VERSION_STRING_ARRAY[0]} == "0" ]; then
+    IS_PRE_RELEASE="true"
+else
+    IS_PRE_RELEASE="false"
+fi
 
 # Create the release with auto-generated notes as the description
-# - NOTE: This will only add stuff if there is at least one PR. If there is no PRs,
+# - NOTE: This will only add notes if there is at least one PR. If there is no PRs,
 # - then this will be blank and need manual input/changing after running.
 if [ $IS_PRE_RELEASE == "true" ]; then
     gh release create "v${new_version}" -p --generate-notes --notes-start-tag "$current_version" --target main -t "${RELEASE_TITLE}"
 else
     gh release create "v${new_version}" --generate-notes --notes-start-tag "$current_version" --target main -t "${RELEASE_TITLE}"
 fi
-
-# ===========================================
 
 popd > /dev/null
