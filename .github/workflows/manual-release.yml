@@ -1,7 +1,5 @@
 name: Manual-Release
 
-name: Release
-
 env:
   GH_TOKEN: ${{ github.token }}
 
