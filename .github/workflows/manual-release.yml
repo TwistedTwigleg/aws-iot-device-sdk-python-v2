@@ -31,7 +31,7 @@ jobs:
 
     - name: Make new release
       run: |
-        $(echo ${github.event.inputs.release_title//[\"]\\\"}) >> $release_title_sanitized
-        $(echo ${release_title_sanitized//[\']\\\'}) >> $release_title_sanitized
-        $(echo ${release_title_sanitized//[\$]/}) >> $release_title_sanitized
+        release_title_sanitized=$(echo ${github.event.inputs.release_title//[\"]\\\"})
+        release_title_sanitized=$(echo ${release_title_sanitized//[\']\\\'})
+        release_title_sanitized=$(echo ${release_title_sanitized//[\$]/})
         ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ release_title_sanitized }}"
