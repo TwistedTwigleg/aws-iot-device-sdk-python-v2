@@ -31,10 +31,14 @@ jobs:
 
     - name: Make new release
       env:
-        TEST: ${{ github.event.inputs.release_title }}
+        TYPE: ${{ github.event.inputs.release_type }}
+        TITLE: ${{ github.event.inputs.release_title }}
       run: |
-        TEST=$(echo ${TEST//[\"]\\\"})
-        # echo ${github.event.inputs.release_title//[\"]\\\"}
-        # github.event.inputs.release_title=$(echo ${github.event.inputs.release_title//[\']\\\'})
-        # github.event.inputs.release_title=$(echo ${$github.event.inputs.release_title//[\$]/})
-        ./publish-release.sh "${{ github.event.inputs.release_type }}" "$TEST"
+        TYPE=$(echo ${TYPE//[\"]/})
+        TYPE=$(echo ${TYPE//[\'']/})
+
+        TITLE=$(echo ${TITLE//[\"]\\\"})
+        TITLE=$(echo ${TITLE//[\']\\\'})
+        TITLE=$(echo ${$TITLE//[\$]/})
+
+        ./publish-release.sh "$TYPE" "$TITLE"
