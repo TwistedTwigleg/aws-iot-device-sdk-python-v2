@@ -35,7 +35,7 @@ jobs:
         TITLE: ${{ github.event.inputs.release_title }}
       run: |
         TYPE=$(echo ${TYPE//[\"]/})
-        TYPE=$(echo ${TYPE//[\'']/})
+        TYPE=$(echo ${TYPE//[\']/})
 
         TITLE=$(echo ${TITLE//[\"]\\\"})
         TITLE=$(echo ${TITLE//[\']\\\'})
