@@ -30,8 +30,10 @@ jobs:
         fetch-depth: 0
 
     - name: Make new release
+      env:
+        TEST: ${{ github.event.inputs.release_title }}
       run: |
-        github.event.inputs.release_title=$(echo ${github.event.inputs.release_title//[\"]\\\"})
+        # echo ${github.event.inputs.release_title//[\"]\\\"}
         # github.event.inputs.release_title=$(echo ${github.event.inputs.release_title//[\']\\\'})
         # github.event.inputs.release_title=$(echo ${$github.event.inputs.release_title//[\$]/})
-        ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ github.event.inputs.release_title }}"
+        ./publish-release.sh "${{ github.event.inputs.release_type }}" "${{ TEST }}"
