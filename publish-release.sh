@@ -5,8 +5,8 @@ set -euxo pipefail
 # Redirect output to stderr.
 exec 1>&2
 
-RELEASE_TYPE=$1
-RELEASE_TITLE=$2
+RELEASE_TYPE="$1"
+RELEASE_TITLE="$2"
 
 echo "RELEASE TITLE IS: $RELEASE_TITLE"
 
@@ -37,12 +37,12 @@ current_version_without_v=$(echo ${current_version} | cut -f2 -dv)
 echo "Current release version is ${current_version_without_v}"
 
 # Validate that RELEASE_TYPE is what we expect and bump the version:
-new_version=${current_version_without_v}
-if [ $RELEASE_TYPE == "bug fix (PATCH)" ]; then
+new_version="${current_version_without_v}"
+if [ "$RELEASE_TYPE" == "bug fix (PATCH)" ]; then
     new_version=$(increment_version ${current_version_without_v} 2 )
-elif [ $RELEASE_TYPE == "new feature (MINOR)" ]; then
+elif [ "$RELEASE_TYPE" == "new feature (MINOR)" ]; then
     new_version=$(increment_version ${current_version_without_v} 1 )
-elif [ $RELEASE_TYPE == "new version (MAJOR)" ]; then
+elif [ "$RELEASE_TYPE" == "new version (MAJOR)" ]; then
     new_version=$(increment_version ${current_version_without_v} 0 )
 else
     echo "ERROR: Unknown release type! Exitting..."
@@ -76,7 +76,7 @@ git push "https://${GITHUB_ACTOR}:${GH_TOKEN}@github.com/TwistedTwigleg/aws-iot-
 IS_PRE_RELEASE="false"
 VERSION_STRING_DELIMITER=.
 VERSION_STRING_ARRAY=($(echo "$new_version" | tr $VERSION_STRING_DELIMITER '\n'))
-if [ ${VERSION_STRING_ARRAY[0]} == "0" ]; then
+if [ "${VERSION_STRING_ARRAY[0]}" == "0" ]; then
     IS_PRE_RELEASE="true"
 else
     IS_PRE_RELEASE="false"
