@@ -8,6 +8,8 @@ exec 1>&2
 RELEASE_TYPE=$1
 RELEASE_TITLE=$2
 
+echo "RELEASE TITLE IS: $RELEASE_TITLE"
+
 # Make sure there are ONLY two arguments
 if [ "$#" != "2" ]; then
     echo "ERROR: Arguments passed is NOT equal to two!"
