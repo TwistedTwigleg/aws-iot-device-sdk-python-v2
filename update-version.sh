@@ -2,7 +2,7 @@
 
 RELEASE_TYPE=$1
 RELEASE_TITLE=$2
-IS_PRE_RELEASE=$3
+IS_PRE_RELEASE="false"
 
 # Increments the version up by one
 # Credit: https://stackoverflow.com/a/64390598
