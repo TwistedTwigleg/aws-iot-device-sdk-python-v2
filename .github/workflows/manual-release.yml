@@ -35,6 +35,7 @@ jobs:
       run: |
         TEST=$(echo ${TEST//[\"]\\\"})
         TEST=$(echo ${TEST//[\']\\\'})
+        TEST=$(echo ${$TEST//[\$]/})
 
         # echo ${github.event.inputs.release_title//[\"]\\\"}
         # github.event.inputs.release_title=$(echo ${github.event.inputs.release_title//[\']\\\'})
