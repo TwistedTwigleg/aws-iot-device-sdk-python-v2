@@ -8,7 +8,7 @@ on:
     inputs:
       release_type:
         type: choice
-        description: "Release type: PATCH = bug fixes, MINOR = new features"
+        description: "Release type:\n* PATCH = bug fixes\n* MINOR = new features"
         required: true
         options:
           - PATCH

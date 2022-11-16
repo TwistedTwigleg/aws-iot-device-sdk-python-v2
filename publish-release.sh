@@ -49,7 +49,7 @@ fi
 echo "New version is ${new_version}"
 
 # Validate that the title is set
-if [ $RELEASE_TITLE == "" ]; then
+if [ "$RELEASE_TITLE" == "" ]; then
     echo "ERROR: No title set! Cannot make release. Exitting..."
     exit -1
 fi
