@@ -16,17 +16,6 @@ if [ "$#" != "2" ]; then
     exit 1
 fi
 
-# Increments the version up by one
-# Credit: https://stackoverflow.com/a/64390598
-increment_version() {
-  local delimiter=.
-  local array=($(echo "$1" | tr $delimiter '\n'))
-  array[$2]=$((array[$2]+1))
-  if [ $2 -lt 2 ]; then array[2]=0; fi
-  if [ $2 -lt 1 ]; then array[1]=0; fi
-  echo $(local IFS=$delimiter ; echo "${array[*]}")
-}
-
 pushd $(dirname $0) > /dev/null
 
 # Get the current version
@@ -36,19 +25,12 @@ current_version_without_v=$(echo ${current_version} | cut -f2 -dv)
 
 echo "Current release version is ${current_version_without_v}"
 
-# Validate that RELEASE_TYPE is what we expect and bump the version:
-new_version="${current_version_without_v}"
-if [ "$RELEASE_TYPE" == "bug fix (PATCH)" ]; then
-    new_version=$(increment_version ${current_version_without_v} 2 )
-elif [ "$RELEASE_TYPE" == "new feature (MINOR)" ]; then
-    new_version=$(increment_version ${current_version_without_v} 1 )
-elif [ "$RELEASE_TYPE" == "new version (MAJOR)" ]; then
-    new_version=$(increment_version ${current_version_without_v} 0 )
-else
+# Validate that RELEASE_TYPE is what we expect and bump the version
+new_version=$(python3 ./utils/update_semanic_version.py --version "${current_version_without_v}" --type "${RELEASE_TYPE}")
+if [ "$new_version" == "0.0.0" ]; then
     echo "ERROR: Unknown release type! Exitting..."
     exit -1
 fi
-echo "New version is ${new_version}"
 
 # Validate that the title is set
 if [ "$RELEASE_TITLE" == "" ]; then
