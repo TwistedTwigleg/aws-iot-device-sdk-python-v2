@@ -7,8 +7,7 @@ exec 1>&2
 
 RELEASE_TYPE="$1"
 RELEASE_TITLE="$2"
-
-echo "RELEASE TITLE IS: $RELEASE_TITLE"
+EXECUTION_DIRECTORY=$(pwd)
 
 # Make sure there are ONLY two arguments
 if [ "$#" != "2" ]; then
@@ -26,7 +25,7 @@ current_version_without_v=$(echo ${current_version} | cut -f2 -dv)
 echo "Current release version is ${current_version_without_v}"
 
 # Validate that RELEASE_TYPE is what we expect and bump the version
-new_version=$(python3 ./update_semanic_version.py --version "${current_version_without_v}" --type "${RELEASE_TYPE}")
+new_version=$(python3 ${EXECUTION_DIRECTORY}/utils/update_semanic_version.py --version "${current_version_without_v}" --type "${RELEASE_TYPE}")
 if [ "$new_version" == "0.0.0" ]; then
     echo "ERROR: Unknown release type! Exitting..."
     exit -1
