@@ -7,7 +7,6 @@ exec 1>&2
 
 RELEASE_TYPE="$1"
 RELEASE_TITLE="$2"
-EXECUTION_DIRECTORY=$(pwd)
 
 # Make sure there are ONLY two arguments
 if [ "$#" != "2" ]; then
@@ -41,7 +40,23 @@ fi
 git config --local user.email "TwistedTwigleg"
 git config --local user.name "GitHub Actions"
 
-# NOTE - if you need to make changes BEFORE making a release, do it here. See Java V2 SDK for example.
+# --==--
+new_version_branch=AutoTag-v${new_version}
+git checkout -b ${new_version_branch}
+
+# Update the version in the README to show the latest
+sed -i -r "s/.*Latest released version:.*/Latest released version: v${new_version}/" README.md
+git add README.md
+# Make the commit
+git commit -m "[v$new_version] $RELEASE_TITLE"
+
+# # push the commit and create a PR
+git push -u "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" ${new_version_branch}
+gh pr create --title "AutoTag PR for v${new_version}" --body "AutoTag PR for v${new_version}" --head ${new_version_branch}
+
+# # Merge the PR
+gh pr merge --admin --squash
+# --==--
 
 # Update local state with the merged pr (if one was made) and just generally make sure we're up to date
 git fetch
