@@ -40,7 +40,7 @@ fi
 git config --local user.email "TwistedTwigleg"
 git config --local user.name "GitHub Actions"
 
-gh auth login --with-token ${GH_TOKEN}
+gh auth login
 
 # --==--
 new_version_branch=AutoTag-v${new_version}
