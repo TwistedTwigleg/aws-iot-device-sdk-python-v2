@@ -39,3 +39,9 @@ jobs:
         Title=$(echo ${Title//[\']\\\'})
         Title=$(echo ${Title//[\$]})
         ./utils/publish-release.sh "${{ github.event.inputs.release_type }}" "$Title"
+
+    - name: configure AWS credentials (Release)
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_CI_RELEASE_ROLE }}
+        aws-region: us-east-1
