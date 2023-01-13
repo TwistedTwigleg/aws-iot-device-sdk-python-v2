@@ -61,7 +61,8 @@ gh pr merge --admin --squash
 # Update local state with the merged pr (if one was made) and just generally make sure we're up to date
 git fetch
 git checkout main
-git pull "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" main
+# git pull "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" main
+git pull origin main
 
 # Create new tag on latest commit with the release title
 git tag -f v${new_version} -m "${RELEASE_TITLE}"
