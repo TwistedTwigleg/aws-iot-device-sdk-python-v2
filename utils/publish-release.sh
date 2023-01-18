@@ -64,7 +64,8 @@ git checkout main
 git pull "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" main
 
 # Create new tag on latest commit with the release title
-git tag -f v${new_version} -m "${RELEASE_TITLE}"
+# git tag -f v${new_version} -m "${RELEASE_TITLE}"
+git tag -f v${new_version}
 # Push new tag to github
 git push "https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/TwistedTwigleg/aws-iot-device-sdk-python-v2.git" --tags
 
