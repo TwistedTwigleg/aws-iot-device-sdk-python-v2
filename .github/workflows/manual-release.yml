@@ -28,9 +28,9 @@ jobs:
 
     steps:
     - name: Checkout Sources
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        submodules: true
 
     - name: Make new release
       env:
@@ -40,3 +40,27 @@ jobs:
         Title=$(echo ${Title//[\']\\\'})
         Title=$(echo ${Title//[\$]})
         ./utils/publish-release.sh "${{ github.event.inputs.release_type }}" "$Title"
+
+    - name: Generate documentation
+      run: |
+        python3 -m pip install sphinx
+        python3 -m pip install --verbose .
+        ./make-docs.py
+
+    - name: Commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add --force docs/
+          git commit --message="update docs"
+
+      - name: Push to docs branch
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ github.token }}
+          branch: docs
+          # Force push so that `docs` branch always looks like `main`,
+          # but with 1 additional "update docs" commit.
+          # This seems simpler than trying to cleanly merge `main` into
+          # `docs` each time.
+          force: true
