@@ -66,3 +66,4 @@ jobs:
         # This seems simpler than trying to cleanly merge `main` into
         # `docs` each time.
         force: true
+
