@@ -53,8 +53,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add --force docs/
         current_version=$(git describe --tags --abbrev=0)
-        current_version_without_v=$(echo ${current_version} | cut -f2 -dv)
-        git commit --message="Update Docs: ${{ current_version_without_v }}"
+        git commit --message="Update Docs: ${current_version}"
 
     - name: Push to docs branch
       uses: ad-m/github-push-action@v0.6.0
